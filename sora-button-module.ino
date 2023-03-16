@@ -14,7 +14,7 @@ void setup() {
 void loop() {
   for (int i = 0; i < 5; i++) {
     if (digitalRead(keys[i]) == HIGH) {
-      if (millis() - previousmillis > 350) {
+      if (millis() - previousmillis > 150) {
         previousmillis = millis();
 
         doAction(keys[i]);
@@ -26,19 +26,19 @@ void loop() {
 void doAction(int pin) {
   switch (pin) {
     case 2:
-      Serial.println("SORA-KEYBIND-ESC");
+      Serial.print("SORA-KEYBIND-ESC");
       break;
     case 3:
-      Serial.println("SORA-KEYBIND-1");
+      Serial.print("SORA-KEYBIND-1");
       break;
     case 4:
-      Serial.println("SORA-KEYBIND-2");
+      Serial.print("SORA-KEYBIND-2");
       break;
     case 5:
-      Serial.println("SORA-KEYBIND-3");
+      Serial.print("SORA-KEYBIND-3");
       break;
     case 6:
-      Serial.println("SORA-KEYBIND-ENTER");
+      Serial.print("SORA-KEYBIND-ENTER");
       break;
   }
 }
