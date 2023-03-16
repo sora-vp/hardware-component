@@ -1,42 +1,44 @@
-int keys[] = {2,3,4};
+int keys[] = { 2, 3, 4, 5, 6 };
+
+uint32_t previousmillis;
+int keypressed = 0;
 
 void setup() {
   // Init serial
   Serial.begin(9600);
 
   // Init pin registered on keys
-  for (int i = 2; i < 5; i++) pinMode(i, INPUT);
+  for (int i = 0; i < 5; i++) pinMode(keys[i], INPUT);
 }
 
 void loop() {
-  for (int i = 2; i < 5; i++) {
-    if (readButton(i)) doAction(i);
+  for (int i = 0; i < 5; i++) {
+    if (digitalRead(keys[i]) == HIGH) {
+      if (millis() - previousmillis > 200) {
+        previousmillis = millis();
+
+        doAction(keys[i]);
+      }
+    }
   }
-}
-
-boolean readButton(int pin) {
-  if (digitalRead(pin) == HIGH) {
-    delay(10); // debounce
-
-    if (digitalRead(pin) == HIGH) return true;
-  }
-
-  return false;
 }
 
 void doAction(int pin) {
   switch (pin) {
     case 2:
-      Serial.println(1);
-      delay(100);
+      Serial.println("SORA-KEYBIND-ESC");
       break;
     case 3:
-      Serial.println(2);
-      delay(100);
+      Serial.println("SORA-KEYBIND-1");
       break;
     case 4:
-      Serial.println(3);
-      delay(100);
+      Serial.println("SORA-KEYBIND-2");
+      break;
+    case 5:
+      Serial.println("SORA-KEYBIND-3");
+      break;
+    case 6:
+      Serial.println("SORA-KEYBIND-ENTER");
       break;
   }
 }
