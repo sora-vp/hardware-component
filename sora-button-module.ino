@@ -14,7 +14,7 @@ void setup() {
 void loop() {
   for (int i = 0; i < 5; i++) {
     if (digitalRead(keys[i]) == HIGH) {
-      if (millis() - previousmillis > 200) {
+      if (millis() - previousmillis > 350) {
         previousmillis = millis();
 
         doAction(keys[i]);
