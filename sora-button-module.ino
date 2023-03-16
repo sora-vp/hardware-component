@@ -1,7 +1,6 @@
 int keys[] = { 2, 3, 4, 5, 6 };
 
 uint32_t previousmillis;
-int keypressed = 0;
 
 void setup() {
   // Init serial
@@ -26,19 +25,19 @@ void loop() {
 void doAction(int pin) {
   switch (pin) {
     case 2:
-      Serial.print("SORA-KEYBIND-ESC");
+      Serial.println("SORA-KEYBIND-ESC");
       break;
     case 3:
-      Serial.print("SORA-KEYBIND-1");
+      Serial.println("SORA-KEYBIND-1");
       break;
     case 4:
-      Serial.print("SORA-KEYBIND-2");
+      Serial.println("SORA-KEYBIND-2");
       break;
     case 5:
-      Serial.print("SORA-KEYBIND-3");
+      Serial.println("SORA-KEYBIND-3");
       break;
     case 6:
-      Serial.print("SORA-KEYBIND-ENTER");
+      Serial.println("SORA-KEYBIND-ENTER");
       break;
   }
 }
