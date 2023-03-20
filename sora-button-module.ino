@@ -1,42 +1,65 @@
-int keys[] = { 2, 3, 4, 5, 6 };
+const int debounceDelay = 50;  // in ms
+const int NUM_KEYS = 5;
 
-uint32_t previousmillis;
+const int keys[NUM_KEYS] = { 2, 3, 4, 5, 6 };
+int buttonState[NUM_KEYS];
+int lastButtonState[NUM_KEYS];
+unsigned long lastDebounceTime[NUM_KEYS];
+
+const int ESC_PIN = 2;
+const int KEYBIND_1_PIN = 3;
+const int KEYBIND_2_PIN = 4;
+const int KEYBIND_3_PIN = 5;
+const int ENTER_PIN = 6;
 
 void setup() {
   // Init serial
   Serial.begin(9600);
 
   // Init pin registered on keys
-  for (int i = 0; i < 5; i++) pinMode(keys[i], INPUT);
+  for (int i = 0; i < NUM_KEYS; i++) {
+    pinMode(keys[i], INPUT_PULLUP);
+    lastButtonState[i] = digitalRead(keys[i]);
+  }
 }
 
 void loop() {
-  for (int i = 0; i < 5; i++) {
-    if (digitalRead(keys[i]) == HIGH) {
-      if (millis() - previousmillis > 150) {
-        previousmillis = millis();
+  for (int i = 0; i < NUM_KEYS; i++) {
+    int reading = digitalRead(keys[i]);
 
-        doAction(keys[i]);
+    if (reading != lastButtonState[i]) {
+      lastDebounceTime[i] = millis();
+    }
+
+    if ((millis() - lastDebounceTime[i]) > debounceDelay) {
+      if (reading != buttonState[i]) {
+        buttonState[i] = reading;
+
+        if (buttonState[i] == LOW) {
+          doAction(keys[i]);
+        }
       }
     }
+
+    lastButtonState[i] = reading;
   }
 }
 
 void doAction(int pin) {
   switch (pin) {
-    case 2:
+    case ESC_PIN:
       Serial.println("SORA-KEYBIND-ESC");
       break;
-    case 3:
+    case KEYBIND_1_PIN:
       Serial.println("SORA-KEYBIND-1");
       break;
-    case 4:
+    case KEYBIND_2_PIN:
       Serial.println("SORA-KEYBIND-2");
       break;
-    case 5:
+    case KEYBIND_3_PIN:
       Serial.println("SORA-KEYBIND-3");
       break;
-    case 6:
+    case ENTER_PIN:
       Serial.println("SORA-KEYBIND-ENTER");
       break;
   }
