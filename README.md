@@ -133,9 +133,21 @@ Tampak depan setelah dilubangi.
 
 Jika dirasa sudah beres, lem semua komponen yang akhirnya tampak seperti kotak yang memiliki tombol. Hasil akhirnya tampak seperti dibawah ini.
 
+![Tampak atas setelah di lem](assets/009-lem-komponen.jpg)
+
+![Tampak depan setelah di lem](assets/009.2-lem-komponen.jpg)
+
+![Tampak sisi depan setelah di lem](assets/009.3-lem-komponen.jpg)
+
 ### 9. Finishing
 
 Dibagian ini, silahkan di hias dan setiap tombol yang ada diberi keterangan supaya peserta pemilihan mengetahui fungsi dari setiap tombol.
+
+![Tampak atas setelah finishing](assets/010-finishing.jpg)
+
+![Tampak depan setelah finishing](assets/010.2-finishing.jpg)
+
+![Tampak sisi depan setelah finishing](assets/010.3-finishing.jpg)
 
 ## Upload sketch ke arduino
 
