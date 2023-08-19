@@ -71,7 +71,7 @@ Desain tombol ini sangat berdasar pada artikel [makeuseof.com](https://www.makeu
 
 Gambar di atas merupakan gambaran dasar sirkuitnya. Jika diperhatikan pin D2 sampai D9 menggunakan transistor 10k ohm yang warna emas terhubung ke pin arduino, sedangkan seluruh resisto warna coklat akan tersambung ke pin ground atau `GND`.
 
-![Gambar sirkuit setelah di solder](assets/005.2-sirkuit-setelah-solder.jpg)
+![Gambar sirkuit setelah di solder](assets/005-sirkuit-setelah-solder.jpg)
 
 Gambar di atas adalah versi yang nantinya akan digunakan.
 
