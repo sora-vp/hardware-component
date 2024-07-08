@@ -40,6 +40,13 @@ func main() {
 						Value:   9600,
 						Usage:   "Pada baud rate berapa papan arduino berjalan",
 					},
+
+					&cli.BoolFlag{
+						Name:    "debug",
+						Aliases: []string{"d"},
+						Value:   false,
+						Usage:   "Menjalankan program ini dalam mode debugging",
+					},
 				},
 				Name:    "start",
 				Aliases: []string{"s"},

@@ -60,6 +60,7 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 	serverPort := cCtx.Int("port")
 	arduinoPort := cCtx.String("board-port")
 	arduinoBaudRate := cCtx.Int("baud-rate")
+	isDebugMode := cCtx.Bool("debug")
 
 	arduinoMode := &serial.Mode{
 		BaudRate: arduinoBaudRate,
@@ -117,6 +118,11 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 		for {
 			n, err := port.Read(buff)
 
+			if isDebugMode {
+				fmt.Println(n)
+				fmt.Println(buff)
+			}
+
 			if err != nil {
 				c.CloseWithError(errors.Join(errors.New("terjadi kesalahan pada koneksi papan mikrokontroler"), err))
 
@@ -133,9 +139,23 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 			incomingArduinoData := strings.Split(string(buff[:n]), "\r\n")
 			santizedNewLine := incomingArduinoData[0]
 
+			if isDebugMode {
+				fmt.Println(incomingArduinoData)
+				fmt.Println(santizedNewLine)
+			}
+
 			if len(santizedNewLine) != 0 {
-				if strings.HasPrefix(santizedNewLine, "SORA-KEYBIND-") {
-					c.WriteMessage(websocket.TextMessage, []byte(santizedNewLine))
+				// Sebuah fix untuk windows yang baca data yang nanggung dari si
+				// arduino yang data seharusnya SORA malah ORA.
+				if strings.HasPrefix(santizedNewLine, "SORA-KEYBIND-") || strings.HasPrefix(santizedNewLine, "ORA-KEYBIND-") {
+					// Kemudian di normalized disini
+					normalizedKeybind := strings.Split(santizedNewLine, "-KEYBIND-")
+
+					if isDebugMode {
+						fmt.Println(normalizedKeybind)
+					}
+
+					c.WriteMessage(websocket.TextMessage, []byte("SORA-KEYBIND-"+normalizedKeybind[1]))
 				}
 			}
 		}
