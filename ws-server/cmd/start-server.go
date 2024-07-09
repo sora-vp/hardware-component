@@ -1,105 +1,136 @@
 package cmd
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"strconv"
 	"strings"
-	"time"
+	"sync"
 
-	"github.com/lesismal/nbio/nbhttp"
-	"github.com/lesismal/nbio/nbhttp/websocket"
+	"github.com/gorilla/websocket"
 	"github.com/urfave/cli/v2"
 	"go.bug.st/serial"
 )
 
-var (
-	upgrader     = newUpgrader()
-	isDebugMode  = false
-	arduinoBoard serial.Port
-)
-
-func newUpgrader() *websocket.Upgrader {
-	u := websocket.NewUpgrader()
-
-	// Keep connection alive for ten minutes
-	u.KeepaliveTime = time.Second * 60 * 10
-
-	u.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
-
-	u.OnOpen(func(c *websocket.Conn) {
-		fmt.Println("Client terhubung!")
-
-		buff := make([]byte, 100)
-
-		for {
-			n, err := arduinoBoard.Read(buff)
-
-			if isDebugMode {
-				fmt.Println(n)
-				fmt.Println(buff)
-			}
-
-			if err != nil {
-				c.CloseWithError(errors.Join(errors.New("terjadi kesalahan pada koneksi papan mikrokontroler"), err))
-
-				log.Fatal(err)
-
-				break
-			}
-
-			if n == 0 {
-				fmt.Println("\nEOF")
-				break
-			}
-
-			incomingArduinoData := strings.Split(string(buff[:n]), "\r\n")
-			santizedNewLine := incomingArduinoData[0]
-
-			if isDebugMode {
-				fmt.Println(incomingArduinoData)
-				fmt.Println(santizedNewLine)
-			}
-
-			if len(santizedNewLine) != 0 {
-				// Sebuah fix untuk windows yang baca data yang nanggung dari si
-				// arduino yang data seharusnya SORA malah ORA.
-				if strings.HasPrefix(santizedNewLine, "SORA-KEYBIND-") || strings.HasPrefix(santizedNewLine, "ORA-KEYBIND-") {
-					// Kemudian di normalized disini
-					normalizedKeybind := strings.Split(santizedNewLine, "-KEYBIND-")
-
-					if isDebugMode {
-						fmt.Println(normalizedKeybind)
-					}
-
-					c.WriteMessage(websocket.TextMessage, []byte("SORA-KEYBIND-"+normalizedKeybind[1]))
-				}
-			}
-		}
-	})
-
-	u.OnClose(func(c *websocket.Conn, err error) {
-		fmt.Println("OnClose:", c.RemoteAddr().String(), err)
-	})
-
-	return u
+// EventEmitter is a simple event emitter.
+type EventEmitter struct {
+	listeners map[string][]chan string
+	mu        sync.Mutex
 }
 
-func onWebsocket(w http.ResponseWriter, r *http.Request) {
+// NewEventEmitter creates a new EventEmitter.
+func NewEventEmitter() *EventEmitter {
+	return &EventEmitter{
+		listeners: make(map[string][]chan string),
+	}
+}
+
+// On registers a listener for an event.
+func (e *EventEmitter) On(event string, ch chan string) {
+	e.mu.Lock()
+
+	defer e.mu.Unlock()
+
+	e.listeners[event] = append(e.listeners[event], ch)
+}
+
+// Off removes a listener for an event.
+func (e *EventEmitter) Off(event string, ch chan string) {
+	e.mu.Lock()
+
+	defer e.mu.Unlock()
+
+	listeners := e.listeners[event]
+
+	for i, listener := range listeners {
+		if listener == ch {
+			e.listeners[event] = append(listeners[:i], listeners[i+1:]...)
+			break
+		}
+	}
+}
+
+// Emit emits an event to all listeners.
+func (e *EventEmitter) Emit(event string, msg string) {
+	e.mu.Lock()
+
+	defer e.mu.Unlock()
+
+	for _, ch := range e.listeners[event] {
+		select {
+		case ch <- msg:
+		default:
+		}
+	}
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+var connections = make(map[*websocket.Conn]chan string)
+var connectionsMu sync.Mutex
+var isDebugMode = false
+
+func handleConnections(w http.ResponseWriter, r *http.Request, emitter *EventEmitter) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 
-	fmt.Println("Upgraded:", conn.RemoteAddr().String())
+	defer conn.Close()
+
+	messageChan := make(chan string)
+	connectionsMu.Lock()
+
+	connections[conn] = messageChan
+	connectionsMu.Unlock()
+
+	emitter.On("keypress", messageChan)
+
+	go func() {
+		for msg := range messageChan {
+			err := conn.WriteMessage(websocket.TextMessage, []byte(msg))
+
+			if err != nil {
+				fmt.Println("write:", err)
+				conn.Close()
+				connectionsMu.Lock()
+
+				delete(connections, conn)
+
+				connectionsMu.Unlock()
+
+				emitter.Off("keypress", messageChan)
+
+				return
+			}
+		}
+	}()
+
+	for {
+		_, _, err := conn.ReadMessage()
+
+		if err != nil {
+			fmt.Println("read:", err)
+			connectionsMu.Lock()
+
+			delete(connections, conn)
+			connectionsMu.Unlock()
+
+			close(messageChan)
+
+			emitter.Off("keypress", messageChan)
+			break
+		}
+	}
 }
 
 func StartWebsocketServer(cCtx *cli.Context) error {
@@ -113,43 +144,79 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 	}
 
 	if len(arduinoPort) == 0 {
-		fmt.Println("Mohon sebutkan port arduinonya!")
-
+		fmt.Println("Please specify the Arduino port!")
 		return nil
 	}
 
 	port, arduErr := serial.Open(arduinoPort, arduinoMode)
-	arduinoBoard = port
-
 	if arduErr != nil {
-		fmt.Println("Terjadi kesalahan dalam menghubungkan papan arduino, Error:", arduErr)
-
+		fmt.Println("Error connecting to Arduino board:", arduErr)
 		return nil
 	}
 
-	mux := &http.ServeMux{}
-	mux.HandleFunc("/ws", onWebsocket)
-	engine := nbhttp.NewEngine(nbhttp.Config{
-		Network:                 "tcp",
-		Addrs:                   []string{"127.0.0.1:" + strconv.Itoa(serverPort)},
-		MaxLoad:                 1000000,
-		ReleaseWebsocketPayload: true,
-		Handler:                 mux,
-	})
+	buff := make([]byte, 30)
 
-	engineErr := engine.Start()
+	// EventEmitter to broadcast messages to WebSocket clients
+	emitter := NewEventEmitter()
 
-	if engineErr != nil {
-		return engineErr
+	// Start WebSocket server
+	go func() {
+		http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+			handleConnections(w, r, emitter)
+		})
+
+		fmt.Println("WebSocket server started on 127.0.0.1:" + strconv.Itoa(serverPort))
+
+		err := http.ListenAndServe("127.0.0.1:"+strconv.Itoa(serverPort), nil)
+
+		if err != nil {
+			fmt.Println("ListenAndServe:", err)
+		}
+	}()
+
+	for {
+		n, err := port.Read(buff)
+
+		if isDebugMode {
+			fmt.Println(n)
+			fmt.Println(buff)
+		}
+
+		if err != nil {
+			log.Fatal("Error reading data:", err)
+			break
+		}
+
+		if n == 0 {
+			fmt.Println("\nEOF")
+			break
+		}
+
+		incomingArduinoData := strings.Split(string(buff[:n]), "\r\n")
+		santizedNewLine := incomingArduinoData[0]
+
+		if isDebugMode {
+			fmt.Println(incomingArduinoData)
+			fmt.Println(santizedNewLine)
+		}
+
+		if len(santizedNewLine) != 0 {
+			// Fix for Windows reading partial data from Arduino
+			if strings.HasPrefix(santizedNewLine, "SORA-KEYBIND-") || strings.HasPrefix(santizedNewLine, "ORA-KEYBIND-") {
+				// Normalize the keybind
+				normalizedKeybind := strings.Split(santizedNewLine, "-KEYBIND-")
+				output := "SORA-KEYBIND-" + normalizedKeybind[1]
+
+				if isDebugMode {
+					fmt.Println("normalized keybind:", normalizedKeybind)
+					fmt.Println("output:", output)
+				}
+
+				// Emit the normalized keybind message to WebSocket clients
+				emitter.Emit("keypress", output)
+			}
+		}
 	}
-
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-	<-interrupt
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
-	engine.Shutdown(ctx)
 
 	return nil
 }
