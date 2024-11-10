@@ -15,6 +15,8 @@ const int KEYBIND_5_PIN = 5;
 const int ENTER_PIN = 3;
 const int RELOAD_PIN = 2;
 
+bool awaitingAck = false;
+
 void setup()
 {
   // Init serial
@@ -30,29 +32,44 @@ void setup()
 
 void loop()
 {
-  for (int i = 0; i < NUM_KEYS; i++)
+  if (awaitingAck)
   {
-    int reading = digitalRead(keys[i]);
-
-    if (reading != lastButtonState[i])
+    if (Serial.available() > 0)
     {
-      lastDebounceTime[i] = millis();
-    }
+      char ack = Serial.read();
 
-    if ((millis() - lastDebounceTime[i]) > debounceDelay)
-    {
-      if (reading != buttonState[i])
+      if (ack == 'A')
       {
-        buttonState[i] = reading;
-
-        if (buttonState[i] == LOW)
-        {
-          doAction(keys[i]);
-        }
+        awaitingAck = false;
       }
     }
+  }
+  else
+  {
+    for (int i = 0; i < NUM_KEYS; i++)
+    {
+      int reading = digitalRead(keys[i]);
 
-    lastButtonState[i] = reading;
+      if (reading != lastButtonState[i])
+      {
+        lastDebounceTime[i] = millis();
+      }
+
+      if ((millis() - lastDebounceTime[i]) > debounceDelay)
+      {
+        if (reading != buttonState[i])
+        {
+          buttonState[i] = reading;
+
+          if (buttonState[i] == LOW)
+          {
+            doAction(keys[i]);
+          }
+        }
+      }
+
+      lastButtonState[i] = reading;
+    }
   }
 }
 
@@ -61,28 +78,30 @@ void doAction(int pin)
   switch (pin)
   {
   case ESC_PIN:
-    Serial.println("SORA-KEYBIND-ESC");
+    Serial.println("<SORA-KEYBIND-ESC>");
     break;
   case RELOAD_PIN:
-    Serial.println("SORA-KEYBIND-RELOAD");
+    Serial.println("<SORA-KEYBIND-RELOAD>");
     break;
   case KEYBIND_1_PIN:
-    Serial.println("SORA-KEYBIND-1");
+    Serial.println("<SORA-KEYBIND-1>");
     break;
   case KEYBIND_2_PIN:
-    Serial.println("SORA-KEYBIND-2");
+    Serial.println("<SORA-KEYBIND-2>");
     break;
   case KEYBIND_3_PIN:
-    Serial.println("SORA-KEYBIND-3");
+    Serial.println("<SORA-KEYBIND-3>");
     break;
   case KEYBIND_4_PIN:
-    Serial.println("SORA-KEYBIND-4");
+    Serial.println("<SORA-KEYBIND-4>");
     break;
   case KEYBIND_5_PIN:
-    Serial.println("SORA-KEYBIND-5");
+    Serial.println("<SORA-KEYBIND-5>");
     break;
   case ENTER_PIN:
-    Serial.println("SORA-KEYBIND-ENTER");
+    Serial.println("<SORA-KEYBIND-ENTER>");
     break;
   }
+
+  awaitingAck = true;
 }
