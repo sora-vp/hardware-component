@@ -76,6 +76,7 @@ var upgrader = websocket.Upgrader{
 var connections = make(map[*websocket.Conn]chan string)
 var connectionsMu sync.Mutex
 var isDebugMode = false
+var incomingMessage = ""
 
 func handleConnections(w http.ResponseWriter, r *http.Request, emitter *EventEmitter) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -192,30 +193,38 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 			break
 		}
 
-		incomingArduinoData := strings.Split(string(buff[:n]), "\r\n")
-		santizedNewLine := incomingArduinoData[0]
+		incomingData := string(buff[:n])
 
 		if isDebugMode {
-			fmt.Println(incomingArduinoData)
-			fmt.Println(santizedNewLine)
+			fmt.Println(incomingData)
 		}
 
-		if len(santizedNewLine) != 0 {
-			// Fix for Windows reading partial data from Arduino
-			if strings.HasPrefix(santizedNewLine, "SORA-KEYBIND-") || strings.HasPrefix(santizedNewLine, "ORA-KEYBIND-") {
-				// Normalize the keybind
-				normalizedKeybind := strings.Split(santizedNewLine, "-KEYBIND-")
-				output := "SORA-KEYBIND-" + normalizedKeybind[1]
+    // Implement start bit with < and the > character as a stop bit.
+    // Ensuring stable and consistent data without normalizer.
+    for i := 0; i < len(incomingData); i++ {
+      char := string(incomingData[i])
 
-				if isDebugMode {
-					fmt.Println("normalized keybind:", normalizedKeybind)
-					fmt.Println("output:", output)
-				}
+      if char == "<" {
+        incomingMessage = ""
+      } else if char == ">" {
+		    if isDebugMode {
+          fmt.Println(incomingMessage)
+		    }
 
 				// Emit the normalized keybind message to WebSocket clients
-				emitter.Emit("keypress", output)
-			}
-		}
+				if strings.HasPrefix(incomingMessage, "SORA-") {
+          emitter.Emit("keypress", incomingMessage)
+        }
+
+        // Send an acknowledgement
+        port.Write([]byte("A\n\r"))
+
+        // Reset value
+        incomingMessage = ""
+      } else {
+        incomingMessage += char;
+      }
+    } 
 	}
 
 	return nil
