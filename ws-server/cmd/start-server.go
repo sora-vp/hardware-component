@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/urfave/cli/v2"
@@ -155,7 +156,7 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 		return nil
 	}
 
-	buff := make([]byte, 30)
+	buff := make([]byte, 32)
 
 	// EventEmitter to broadcast messages to WebSocket clients
 	emitter := NewEventEmitter()
@@ -178,53 +179,49 @@ func StartWebsocketServer(cCtx *cli.Context) error {
 	for {
 		n, err := port.Read(buff)
 
-		if isDebugMode {
-			fmt.Println(n)
-			fmt.Println(buff)
-		}
-
 		if err != nil {
 			log.Fatal("Error reading data:", err)
 			break
 		}
 
-		if n == 0 {
-			fmt.Println("\nEOF")
-			break
-		}
+		incomingData := strings.TrimSpace(string(buff[:n]))
 
-		incomingData := string(buff[:n])
+		if strings.EqualFold(incomingData, "") {
+			continue
+		}
 
 		if isDebugMode {
-			fmt.Println(incomingData)
+			dt := time.Now()
+			fmt.Println("[", dt.Format(time.StampMilli), "]", incomingData)
 		}
 
-    // Implement start bit with < and the > character as a stop bit.
-    // Ensuring stable and consistent data without normalizer.
-    for i := 0; i < len(incomingData); i++ {
-      char := string(incomingData[i])
+		// Implement start bit with < and the > character as a stop bit.
+		// Ensuring stable and consistent data without normalizer.
+		for i := 0; i < len(incomingData); i++ {
+			char := string(incomingData[i])
 
-      if char == "<" {
-        incomingMessage = ""
-      } else if char == ">" {
-		    if isDebugMode {
-          fmt.Println(incomingMessage)
-		    }
+			if char == "<" {
+				incomingMessage = ""
+			} else if char == ">" {
+				if isDebugMode {
+					dt := time.Now()
+					fmt.Println("[", dt.Format(time.StampMilli), "]", incomingMessage)
+				}
 
 				// Emit the normalized keybind message to WebSocket clients
 				if strings.HasPrefix(incomingMessage, "SORA-") {
-          emitter.Emit("keypress", incomingMessage)
-        }
+					emitter.Emit("keypress", incomingMessage)
+				}
 
-        // Send an acknowledgement
-        port.Write([]byte("A\n\r"))
+				// Send an acknowledgement
+				port.Write([]byte("A\n\r"))
 
-        // Reset value
-        incomingMessage = ""
-      } else {
-        incomingMessage += char;
-      }
-    } 
+				// Reset value
+				incomingMessage = ""
+			} else {
+				incomingMessage += char
+			}
+		}
 	}
 
 	return nil
