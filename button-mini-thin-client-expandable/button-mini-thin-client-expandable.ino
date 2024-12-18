@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <Vector.h>
 
 #define I2C_ADDRESS 0x1F
 
@@ -11,7 +12,8 @@ int lastButtonState[NUM_KEYS];
 unsigned long lastDebounceTime[NUM_KEYS];
 
 // Buffer to store the state to be sent to the master
-String currentMessage = "";
+String allMessages[10];
+Vector<String> outcomingMessages;
 
 void setup() {
   // Init I2C
@@ -27,6 +29,8 @@ void setup() {
     pinMode(keys[i], INPUT_PULLUP);
     lastButtonState[i] = digitalRead(keys[i]);
   }
+
+  outcomingMessages.setStorage(allMessages);
 }
 
 void loop() {
@@ -42,7 +46,11 @@ void loop() {
         buttonState[i] = reading;
 
         if (buttonState[i] == LOW) {
-          currentMessage = generateMessage(keys[i]);
+          String currentMessage = generateMessage(keys[i]);
+
+          if (outcomingMessages.size() > 9) outcomingMessages.clear();
+          else outcomingMessages.push_back(currentMessage);
+
           Serial.println(currentMessage);
         }
       }
@@ -66,9 +74,10 @@ String generateMessage(int pin) {
 // Send the current message over I2C when requested
 void sendData() {
   Serial.println("Minta!");
-  if (currentMessage != "") {
-    Wire.write(currentMessage.c_str());
-    currentMessage = "";
+
+  if (outcomingMessages.size() > 0) {
+    Wire.write(outcomingMessages.front().c_str());
+    outcomingMessages.remove(0);
     Serial.println("Dibales!");
   }
 }
