@@ -5,7 +5,9 @@
 
 // Pin definitions and button address
 #define IR_SENSOR_PIN 16
-#define ONBOARD_LED_PIN 2
+#define SUCCESSFULLY_DETECTED_LED_PIN 2
+#define SERIAL_SENT_LED_PIN 17
+#define ERROR_INDICATOR_LED_PIN 18
 #define PN532_RESET_TRANSISTOR_PIN 4
 #define BUTTON_HARDWARE_ADDRESS 0x1F
 
@@ -69,10 +71,14 @@ void setup() {
   Serial.begin(115200);
 
   pinMode(IR_SENSOR_PIN, INPUT);
-  pinMode(ONBOARD_LED_PIN, OUTPUT);
+  pinMode(SUCCESSFULLY_DETECTED_LED_PIN, OUTPUT);
   pinMode(PN532_RESET_TRANSISTOR_PIN, OUTPUT);
+  pinMode(SERIAL_SENT_LED_PIN, OUTPUT);
+  pinMode(ERROR_INDICATOR_LED_PIN, OUTPUT);
 
   digitalWrite(PN532_RESET_TRANSISTOR_PIN, LOW);
+  digitalWrite(SERIAL_SENT_LED_PIN, LOW);
+  digitalWrite(ERROR_INDICATOR_LED_PIN, HIGH);
 
   Wire.setClock(10000);
 
@@ -101,13 +107,14 @@ void setup() {
   }
 
   Serial.println("SYS OK!");
+  digitalWrite(ERROR_INDICATOR_LED_PIN, LOW);
 
   // Create tasks
   xTaskCreatePinnedToCore(irTask, "IR Sensor Task", 5000, NULL, 1, &irTaskHandle, 1);
   xTaskCreatePinnedToCore(nfcTask, "NFC Reader Task", 3500, NULL, 1, &nfcTaskHandle, 1);
-  xTaskCreatePinnedToCore(buttonTask, "External Button Hardware Task", 2000, NULL, 1, &buttonTaskHandle, 1);
+  xTaskCreatePinnedToCore(buttonTask, "External Button Hardware Task", 3000, NULL, 1, &buttonTaskHandle, 1);
   xTaskCreatePinnedToCore(queueManagerTask, "Queue Manager Task", 2000, NULL, 1, &queueTaskHandle, 0);
-  xTaskCreatePinnedToCore(serialTask, "Serial Task", 2000, NULL, 1, &serialTaskHandle, 0);
+  xTaskCreatePinnedToCore(serialTask, "Serial Task", 3000, NULL, 1, &serialTaskHandle, 0);
 }
 
 void irTask(void *parameter) {
@@ -162,6 +169,10 @@ void nfcTask(void *parameter) {
       vTaskResume(irTaskHandle);  // Resume IR task
     } else {
       Serial.println("Timeout");
+
+      digitalWrite(ERROR_INDICATOR_LED_PIN, HIGH);
+      vTaskDelay(300 / portTICK_PERIOD_MS);
+      digitalWrite(ERROR_INDICATOR_LED_PIN, LOW);
     }
 
     // Small delay to avoid immediate re-trigger
@@ -220,10 +231,10 @@ void queueManagerTask(void *parameter) {
     String message;
     if (localState == UNAVAIL_STATE) {
       message = "<SORA-THIN-CLIENT-DATA-UNAVAIL>";
-      digitalWrite(ONBOARD_LED_PIN, LOW);
+      digitalWrite(SUCCESSFULLY_DETECTED_LED_PIN, LOW);
     } else if (localState == AVAIL_STATE) {
       message = "<SORA-THIN-CLIENT-DATA-" + localUID + ">";
-      digitalWrite(ONBOARD_LED_PIN, HIGH);
+      digitalWrite(SUCCESSFULLY_DETECTED_LED_PIN, HIGH);
     }
 
     // Send the message to the queue
@@ -239,11 +250,17 @@ void serialTask(void *parameter) {
   char buffer[32];  // Buffer for dequeued message
   
   while (true) {
+
     if (xQueueReceive(stringQueue, buffer, portMAX_DELAY)) {
       Serial.println(buffer);
+
+      digitalWrite(SERIAL_SENT_LED_PIN, HIGH);
+      vTaskDelay(25 / portTICK_PERIOD_MS);
+      digitalWrite(SERIAL_SENT_LED_PIN, LOW);
+    } else {
+      vTaskDelay(25 / portTICK_PERIOD_MS);  // Small delay to avoid busy-waiting
     }
 
-    vTaskDelay(25 / portTICK_PERIOD_MS);  // Small delay to avoid busy-waiting
   }
 }
 
