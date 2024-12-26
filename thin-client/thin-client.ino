@@ -11,6 +11,9 @@
 #define PN532_RESET_TRANSISTOR_PIN 4
 #define BUTTON_HARDWARE_ADDRESS 0x1F
 
+// Define queue item size for convenience
+#define QUEUE_ITEM_SIZE 55
+
 // Create PN532 instance
 PN532_I2C pn532i2c(Wire);
 PN532 nfc(pn532i2c);
@@ -96,7 +99,7 @@ void setup()
   }
 
   // Create the queue
-  stringQueue = xQueueCreate(100, 55); // Adjust queue length and item size as needed
+  stringQueue = xQueueCreate(100, QUEUE_ITEM_SIZE); // Adjust queue length and item size as needed
 
   if (stringQueue == NULL)
   {
@@ -188,8 +191,6 @@ void nfcTask(void *parameter)
     }
     else
     {
-      Serial.println("Timeout");
-
       digitalWrite(ERROR_INDICATOR_LED_PIN, HIGH);
       vTaskDelay(300 / portTICK_PERIOD_MS);
       digitalWrite(ERROR_INDICATOR_LED_PIN, LOW);
@@ -287,7 +288,7 @@ void queueManagerTask(void *parameter)
 
 void serialTask(void *parameter)
 {
-  char buffer[32]; // Buffer for dequeued message
+  char buffer[QUEUE_ITEM_SIZE]; // Buffer for dequeued message
 
   while (true)
   {
