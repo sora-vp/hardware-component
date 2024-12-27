@@ -3,13 +3,15 @@
 
 #define I2C_ADDRESS 0x1F
 
-const int debounceDelay = 50; // in ms
+const short i2cIdleTolerantMS = 950;
+const short debounceDelay = 50; // in ms
 const int NUM_KEYS = 5;
 
 const int keys[NUM_KEYS] = {2, 3, 4, 5, 6};
 int buttonState[NUM_KEYS];
 int lastButtonState[NUM_KEYS];
 unsigned long lastDebounceTime[NUM_KEYS];
+unsigned long idleMillisNoI2C = 0;
 
 // Buffer to store the state to be sent to the master
 String allMessages[10];
@@ -37,6 +39,15 @@ void setup()
 
 void loop()
 {
+  unsigned long currentMillis = millis();
+
+  if ((currentMillis - idleMillisNoI2C) >= i2cIdleTolerantMS)
+  {
+    idleMillisNoI2C = currentMillis;
+
+    outcomingMessages.clear();
+  }
+
   for (int i = 0; i < NUM_KEYS; i++)
   {
     int reading = digitalRead(keys[i]);

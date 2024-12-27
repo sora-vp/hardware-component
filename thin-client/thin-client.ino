@@ -86,6 +86,7 @@ void setup()
   digitalWrite(SERIAL_SENT_LED_PIN, LOW);
   digitalWrite(ERROR_INDICATOR_LED_PIN, HIGH);
 
+  Wire.begin();
   Wire.setClock(10000);
 
   // Create the mutex
