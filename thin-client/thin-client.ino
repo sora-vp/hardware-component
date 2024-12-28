@@ -24,18 +24,26 @@ TaskHandle_t nfcTaskHandle;
 TaskHandle_t queueTaskHandle;
 TaskHandle_t buttonTaskHandle;
 TaskHandle_t serialTaskHandle;
+TaskHandle_t ledTaskHandle;
 
 // Mutex handle
 SemaphoreHandle_t stateMutex;
 
 // Handle string queue of handler
 QueueHandle_t stringQueue;
+QueueHandle_t ledQueue;
 
 // Define states as an enum
 enum MachineState
 {
   UNAVAIL_STATE,
   AVAIL_STATE
+};
+enum LedSuccessState
+{
+  LED_OFF,
+  LED_IR_DETECTED, // 28 brightness
+  LED_NFC_DETECTED // 255 brightness
 };
 
 unsigned short failedAttempts = 0;
@@ -104,7 +112,15 @@ void setup()
 
   if (stringQueue == NULL)
   {
-    Serial.println("Failed to create queue!");
+    Serial.println("Failed to create serial string queue!");
+    while (true)
+      ;
+  }
+
+  ledQueue = xQueueCreate(30, sizeof(LedSuccessState));
+  if (ledQueue == NULL)
+  {
+    Serial.println("Failed to create LED queue!");
     while (true)
       ;
   }
@@ -129,6 +145,7 @@ void setup()
   xTaskCreatePinnedToCore(buttonTask, "External Button Hardware Task", 3000, NULL, 1, &buttonTaskHandle, 1);
   xTaskCreatePinnedToCore(queueManagerTask, "Queue Manager Task", 2000, NULL, 1, &queueTaskHandle, 0);
   xTaskCreatePinnedToCore(serialTask, "Serial Task", 3000, NULL, 1, &serialTaskHandle, 0);
+  xTaskCreatePinnedToCore(ledTask, "LED Control Task", 2000, NULL, 1, &ledTaskHandle, 0);
 }
 
 void irTask(void *parameter)
@@ -140,10 +157,16 @@ void irTask(void *parameter)
     if (objectDetected)
     {
       vTaskResume(nfcTaskHandle); // Wake NFC task
+
+      LedSuccessState ledState = LED_IR_DETECTED;
+      xQueueSend(ledQueue, &ledState, 0);
     }
     else
     {
       vTaskSuspend(nfcTaskHandle);
+
+      LedSuccessState ledState = LED_OFF;
+      xQueueSend(ledQueue, &ledState, 0);
 
       // Lock the mutex to update shared state
       if (xSemaphoreTake(stateMutex, portMAX_DELAY))
@@ -241,9 +264,12 @@ void buttonTask(void *param)
     // Enqueue the received message if it's valid
     if (strlen(buffer) > 0)
     {
-      if (xQueueSend(stringQueue, buffer, pdMS_TO_TICKS(100)) != pdPASS)
+      if (strncmp(buffer, "<SORA-KEYBIND-", 14) == 0)
       {
-        specialQueueFullError();
+        if (xQueueSend(stringQueue, buffer, pdMS_TO_TICKS(100)) != pdPASS)
+        {
+          specialQueueFullError();
+        }
       }
     }
 
@@ -271,12 +297,13 @@ void queueManagerTask(void *parameter)
     if (localState == UNAVAIL_STATE)
     {
       message = "<SORA-THIN-CLIENT-DATA-UNAVAIL>";
-      digitalWrite(SUCCESSFULLY_DETECTED_LED_PIN, LOW);
     }
     else if (localState == AVAIL_STATE)
     {
       message = "<SORA-THIN-CLIENT-DATA-" + localUID + ">";
-      digitalWrite(SUCCESSFULLY_DETECTED_LED_PIN, HIGH);
+
+      LedSuccessState ledState = LED_NFC_DETECTED;
+      xQueueSend(ledQueue, &ledState, 0);
     }
 
     // Send the message to the queue
@@ -308,6 +335,53 @@ void serialTask(void *parameter)
     {
       vTaskDelay(25 / portTICK_PERIOD_MS); // Small delay to avoid busy-waiting
     }
+  }
+}
+
+void ledTask(void *parameter)
+{
+  LedSuccessState currentState = LED_OFF;
+  LedSuccessState lastReceivedState = LED_OFF;
+
+  unsigned long lastUpdateTime = 0;        // Timestamp for last state change
+  const unsigned long debounceDelay = 150; // Value between 100ms (irTask, queueManagerTask) and 200ms (queueManagerTask)
+
+  while (true)
+  {
+    LedSuccessState newState;
+
+    if (xQueueReceive(ledQueue, &newState, portMAX_DELAY))
+    {
+      // Only consider state changes after the debounce delay
+      unsigned long currentTime = millis();
+
+      if (newState != lastReceivedState)
+      {
+        lastReceivedState = newState; // Update the last received state
+
+        // Apply the new state only if debounce delay has passed
+        if (currentTime - lastUpdateTime >= debounceDelay || newState == LED_OFF)
+        {
+          lastUpdateTime = currentTime; // Update the last change timestamp
+          currentState = newState;
+
+          switch (currentState)
+          {
+          case LED_OFF:
+            analogWrite(SUCCESSFULLY_DETECTED_LED_PIN, 0);
+            break;
+          case LED_IR_DETECTED:
+            analogWrite(SUCCESSFULLY_DETECTED_LED_PIN, 13);
+            break;
+          case LED_NFC_DETECTED:
+            analogWrite(SUCCESSFULLY_DETECTED_LED_PIN, 255);
+            break;
+          }
+        }
+      }
+    }
+
+    vTaskDelay(10 / portTICK_PERIOD_MS); // Small delay to reduce task overhead
   }
 }
 
