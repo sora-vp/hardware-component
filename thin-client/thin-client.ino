@@ -192,6 +192,8 @@ void nfcTask(void *parameter)
     }
     else
     {
+      failedAttempts++;
+
       digitalWrite(ERROR_INDICATOR_LED_PIN, HIGH);
       vTaskDelay(300 / portTICK_PERIOD_MS);
       digitalWrite(ERROR_INDICATOR_LED_PIN, LOW);
