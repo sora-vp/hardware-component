@@ -208,7 +208,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/7ae63c0e-7f7e-41a4-8f42-a7cf8757fe17")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 0.92)
@@ -443,7 +443,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/6bb2ca6c-5ef7-421c-b7df-5379ae068438")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 0.92)
@@ -678,7 +678,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/ef467190-5444-4f60-962d-9ecbcbc0a832")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 -0.92)
@@ -913,7 +913,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/a7a9e5fd-5b34-4d99-a4a7-3d3e7198b17f")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 -0.92)
@@ -1148,7 +1148,7 @@
 		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/dcd7ef8b-7b1f-4bcc-b2c5-ac5c3426adee")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 -0.76)
@@ -1431,7 +1431,7 @@
 		(property ki_fp_filters "esp32?devkit?v1?doit*")
 		(path "/11a5bca3-5056-4ca7-9a84-ceefbb68ef18")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -14 -4.04)
@@ -2668,7 +2668,7 @@
 		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/da5918e5-6021-4f19-b02a-686b6648a5e7")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 -0.76)
@@ -2955,7 +2955,7 @@
 		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/d22bfc8d-9d3d-4d91-95e1-9a05001d97bf")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 -0.76)
@@ -3242,7 +3242,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/db559f0a-e416-465f-beb9-0b992a859eb3")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 -0.92)
@@ -3476,7 +3476,7 @@
 		)
 		(path "/4876d367-4776-4d97-a688-38e554fe3685")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 1.965)
@@ -3762,7 +3762,7 @@
 		)
 		(path "/ccef64d8-7515-4984-a903-6f1029ca07d7")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 -0.76)
@@ -4057,7 +4057,7 @@
 		(property ki_fp_filters "TO?220*")
 		(path "/1e5a7acf-4e51-4864-aa30-da0d9c90b8ed")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -2.58 1.371)
@@ -4365,7 +4365,7 @@
 		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/0b2a6d2d-9cef-4f92-8747-3550d83bc81f")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 1.965)
@@ -4651,7 +4651,7 @@
 		)
 		(path "/ff163db4-1041-43b9-b9aa-04ad78fc4280")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 -0.76)
@@ -4960,7 +4960,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/78e025cf-e287-4cee-a5bf-4720e0f36fcc")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 -0.92)
@@ -5195,7 +5195,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/bbfde7c7-cada-4709-b4a5-cb353038cb28")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 0.62 -0.92)
@@ -5431,7 +5431,7 @@
 		(property ki_fp_filters "Jack*")
 		(path "/589bfcf7-79ba-4e8d-96d5-e004e02e4c10")
 		(sheetname "Root")
-		(sheetfile "Sora-Thin-Client.kicad_sch")
+		(sheetfile "Sora-Thin-Client-Dua-Layer.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start 1.11 0.76)

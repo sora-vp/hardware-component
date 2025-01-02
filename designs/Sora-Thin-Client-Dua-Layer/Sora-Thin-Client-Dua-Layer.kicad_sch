@@ -3668,7 +3668,7 @@
 			(uuid "53d196e4-deb1-4c6d-b866-bb324322edb9")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "D4")
 					(unit 1)
@@ -4025,7 +4025,7 @@
 			(uuid "047f71ac-de0f-4a40-a057-8589a5433352")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR012")
 					(unit 1)
@@ -4091,7 +4091,7 @@
 			(uuid "543240f8-4048-450b-a659-e15bbe129d16")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#FLG04")
 					(unit 1)
@@ -4156,7 +4156,7 @@
 			(uuid "6e0b57c9-9a7a-44c6-96a6-8e768c6500e0")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR016")
 					(unit 1)
@@ -4487,7 +4487,7 @@
 			(uuid "f0046efc-ee72-491b-a6a4-20a005c35785")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR09")
 					(unit 1)
@@ -4627,7 +4627,7 @@
 			(uuid "7cf26560-bcb3-4dd3-8ddb-3b5a48a9481a")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR013")
 					(unit 1)
@@ -4697,7 +4697,7 @@
 			(uuid "0be56ae2-2153-42f3-a332-bdc2628f9518")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "R3")
 					(unit 1)
@@ -4834,7 +4834,7 @@
 			(uuid "e3687f7b-a580-4757-8724-75ada497732b")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "R2")
 					(unit 1)
@@ -4965,7 +4965,7 @@
 			(uuid "b57965db-1495-4c29-b99f-0bea1e283e9b")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR015")
 					(unit 1)
@@ -5032,7 +5032,7 @@
 			(uuid "d6cef05c-534b-4ed1-a947-65943afb8e50")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#FLG01")
 					(unit 1)
@@ -5169,7 +5169,7 @@
 			(uuid "98fe8341-bafc-4e7a-b96e-a0a039c046bb")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR05")
 					(unit 1)
@@ -5439,7 +5439,7 @@
 			(uuid "f2eb640a-1e89-4a9f-846e-9210278b9e21")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR010")
 					(unit 1)
@@ -5505,7 +5505,7 @@
 			(uuid "e2bec3d8-18df-4b68-8432-13cf6a60c202")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR06")
 					(unit 1)
@@ -5708,7 +5708,7 @@
 			(uuid "2e4e1b33-cf97-4645-811b-43c3bc762ddb")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "R6")
 					(unit 1)
@@ -5911,7 +5911,7 @@
 			(uuid "5d727993-5d21-4b09-867e-08e0d91feae8")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#FLG05")
 					(unit 1)
@@ -5977,7 +5977,7 @@
 			(uuid "3bb76e2f-3401-44a8-9e64-316bb695ca67")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#PWR04")
 					(unit 1)
@@ -6044,7 +6044,7 @@
 			(uuid "921f2432-c68c-4f5b-93ab-16bfef75e695")
 		)
 		(instances
-			(project "Sora-Thin-Client"
+			(project "Sora-Thin-Client-Dua-Layer"
 				(path "/2f57c47a-701b-4d44-a970-cb392b0f11f9"
 					(reference "#FLG03")
 					(unit 1)
