@@ -95,7 +95,7 @@
 			(sketchpadsonfab no)
 			(subtractmaskfromsilk no)
 			(outputformat 4)
-			(mirror yes)
+			(mirror no)
 			(drillshape 2)
 			(scaleselection 1)
 			(outputdirectory "out/")
@@ -1372,7 +1372,7 @@
 			(uuid "6e28cd09-aa41-4a64-acd0-ddb609c1d46e")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0.635 360)
+			(at 0 0.635 0)
 			(layer "F.Fab")
 			(uuid "692ad199-f260-4a94-9ab7-571153627e9e")
 			(effects
@@ -2434,7 +2434,7 @@
 			(uuid "3903435c-d0a3-430b-bbe0-375971d738db")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0.635 360)
+			(at 0 0.635 0)
 			(layer "F.Fab")
 			(uuid "59beeeab-4281-411e-bea8-1600558c55d2")
 			(effects
@@ -2485,7 +2485,7 @@
 		(descr "Through hole straight pin header, 1x04, 1.27mm pitch, single row")
 		(tags "Through hole pin header THT 1x04 1.27mm single row")
 		(property "Reference" "J1"
-			(at 0 -1.695 360)
+			(at 0 -1.695 0)
 			(layer "F.SilkS")
 			(uuid "beba93e1-80c0-4fdc-abd9-980f9fd76dda")
 			(effects
@@ -2496,7 +2496,7 @@
 			)
 		)
 		(property "Value" "AudioJackI2C_Switch"
-			(at 0 5.505 360)
+			(at 0 5.505 0)
 			(layer "F.Fab")
 			(uuid "0b273b44-412b-4867-ae47-b566e3d0a893")
 			(effects
@@ -3029,7 +3029,7 @@
 		(descr "Through hole straight pin header, 1x02, 1.27mm pitch, single row")
 		(tags "Through hole pin header THT 1x02 1.27mm single row")
 		(property "Reference" "D2"
-			(at 0 -1.695 360)
+			(at 0 -1.695 0)
 			(layer "F.SilkS")
 			(uuid "b81c6fc4-cc42-43d6-8920-6b88e3e9f5cf")
 			(effects
@@ -3040,7 +3040,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 0 2.965 360)
+			(at 0 2.965 0)
 			(layer "F.Fab")
 			(uuid "57ed95ab-2cf5-4bb0-9839-0b9a48059d20")
 			(effects
@@ -3551,7 +3551,7 @@
 			(uuid "1b90c9c6-a105-4b74-a0a4-5cf8b1e531d3")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 1.27 360)
+			(at 0 1.27 0)
 			(layer "F.Fab")
 			(uuid "b116562a-3719-487f-a4b4-c643512390d0")
 			(effects
@@ -4083,7 +4083,7 @@
 			(uuid "e864cce2-a105-4071-9a01-f1a22062f4d7")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 1.905 360)
+			(at 0 1.905 0)
 			(layer "F.Fab")
 			(uuid "73f627e3-5a4e-4c53-9d49-6e984062ad06")
 			(effects
@@ -5389,7 +5389,7 @@
 		(descr "Through hole straight pin header, 1x02, 1.27mm pitch, single row")
 		(tags "Through hole pin header THT 1x02 1.27mm single row")
 		(property "Reference" "D3"
-			(at 0 -1.695 360)
+			(at 0 -1.695 0)
 			(layer "F.SilkS")
 			(uuid "f48ad2aa-e682-4876-a064-c1fcae906984")
 			(effects
@@ -5400,7 +5400,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 0 2.965 360)
+			(at 0 2.965 0)
 			(layer "F.Fab")
 			(uuid "bea33ff7-833d-4e73-81d1-30d9e33cd72c")
 			(effects
