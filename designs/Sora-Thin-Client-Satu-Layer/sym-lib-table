@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Additional_ThinClient_Requirement")(type "KiCad")(uri "${KIPRJMOD}/Additional_ThinClient_Requirement.kicad_sym")(options "")(descr ""))
+)
